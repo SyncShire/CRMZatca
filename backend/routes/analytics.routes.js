@@ -1,9 +1,10 @@
 import express from "express";
 
-import { getMonthlyIncomeDetails } from "../controllers/analytics.controller.js";
+import { getMonthlyIncomeDetails, getInvoiceStatusDetails } from "../controllers/analytics.controller.js";
 
 const router = express.Router();
 
-router.route("/").get(getMonthlyIncomeDetails);
+router.route("/monthly-income").get(getMonthlyIncomeDetails);
+router.route("/invoice-status").get(getInvoiceStatusDetails);
 
 export default router;

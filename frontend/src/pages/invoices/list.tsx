@@ -25,7 +25,7 @@ import {
     Space,
     Button,
     Spin,
-    Dropdown, Menu
+    Dropdown, Menu, Card
 } from "antd";
 import {
     EditOutlined,
@@ -35,10 +35,9 @@ import {
     SafetyOutlined,
     FileDoneOutlined,
     InfoCircleOutlined,
-    DownloadOutlined,
+    DownloadOutlined, ShopOutlined,
 
 } from "@ant-design/icons";
-import {API_URL} from "@/utils/constants";
 import {BASE_URL_API_V1, ZATCA_URLS} from "@/utils/urls";
 import {getRandomColorFromString} from "@/utils/get-random-color";
 import type {Invoice} from "@/types";
@@ -52,6 +51,7 @@ import {
     PDFViewer,
 } from "@react-pdf/renderer";
 import {UseToastHelpers} from "@/components/toastHelper/UseToastHelpers";
+import InvoiceStatusPieChart from "@/components/charts/InvoiceStatusPieChart";
 
 export const InvoicePageList = () => {
     const [record, setRecord] = useState<Invoice>();
@@ -166,6 +166,8 @@ export const InvoicePageList = () => {
 
     return (
         <>
+                {/*<InvoiceStatusPieChart/>*/}
+
             <Spin spinning={loading} tip="Processing...">
                 <List
                     title="Invoices"
@@ -267,8 +269,7 @@ export const InvoicePageList = () => {
                                     </FilterDropdown>
                                 )}
                                 render={(_, record: Invoice) => {
-                                    const logoUrl = record?.account?.logo;
-                                    const src = logoUrl ? `${API_URL}${logoUrl}` : undefined;
+                                    const src = record?.account?.logo;
                                     const name = record?.account?.account_name;
 
                                     return (

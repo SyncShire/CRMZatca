@@ -3,6 +3,7 @@ import Account from "../mongodb/models/account.js";
 import Service from "../mongodb/models/service.js";
 import Client from "../mongodb/models/client.js";
 import MyOrgProfile from "../mongodb/models/myorgprofile.js";
+import InventoryItemModel from "../mongodb/models/inventoryitem.js";
 import User from "../mongodb/models/user.js";
 import mongoose from "mongoose";
 import InvoiceBuilder from "../helpers/InvoiceBuilder.js";
@@ -137,7 +138,6 @@ const createInvoice = async (req, res) => {
         let {
             account,
             client,
-            status,
             services,
             invoice_name,
             invoiceDate,
@@ -176,6 +176,8 @@ const createInvoice = async (req, res) => {
             services.map((service) => ({...service, creator: userId})),
             {session}
         );
+
+        await handleInventoryUpdate(services, session);
 
         let totalRounded = roundToTwo(total);
 
@@ -368,10 +370,13 @@ const updateInvoice = async (req, res) => {
             await Service.findByIdAndUpdate(service._id, service, {session});
         }
 
+        await handleInventoryUpdate(updatedServices, session);
+
         // Remove deleted services
         if (deletedServices.length > 0) {
             await Service.deleteMany({_id: {$in: deletedServices}}, {session});
         }
+        await handleInventoryUpdate(deletedServices, session, "deleteService");
 
         let totalRounded = roundToTwo(total);
 
@@ -502,6 +507,46 @@ const deleteInvoice = async (req, res) => {
         res.status(500).json({message: error.message});
     }
 };
+
+async function handleInventoryUpdate(services, session, flag) {
+    // 2️⃣ Safely update stock for each service
+    for (const service of services) {
+        const {item_code, quantity} = service;
+
+        if (!item_code) continue; // skip if no item_code linked to inventory
+
+        const inventoryItem = await InventoryItemModel.findOne({item_code}).session(session);
+
+        if (!inventoryItem) {
+            throw new Error(`Inventory item not found for item_code: ${item_code}`);
+        }
+
+        if (inventoryItem.is_service) continue; // skip if it's a service item
+
+        if (inventoryItem.current_stock < quantity) {
+            throw new Error(
+                `Insufficient stock for ${inventoryItem.item_name} ItemCode: ${inventoryItem.item_code}.
+                 Available: ${inventoryItem.current_stock}, Requested: ${quantity}`
+            );
+        }
+
+        if (flag !== "deleteService") {
+            // Atomic decrement
+            await InventoryItemModel.updateOne(
+                {_id: inventoryItem._id},
+                {$inc: {current_stock: -quantity}},
+                {session}
+            );
+        } else {
+            await InventoryItemModel.updateOne(
+                {_id: inventoryItem._id},
+                {$inc: {current_stock: +quantity}},
+                {session}
+            );
+        }
+    }
+
+}
 
 export {
     getAllInvoices,

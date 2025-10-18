@@ -47,7 +47,8 @@ app.use("/api/v1/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/v1/currencies", currencyRouter);
 app.use("/api/v1/invoices", invoiceRouter);
 app.use("/api/v1/events", eventRouter);
-app.use("/api/v1/monthly-income", analyticsRouter);
+app.use("/api/v1/analytics", analyticsRouter);
+
 app.use("/api/v1/clientmedias", clientMediaRouter);
 app.use("/api/v1/myorgprofile", myorgprofileRouter);
 app.use("/api/v1/inventoryitems", inventoryItemRouter);

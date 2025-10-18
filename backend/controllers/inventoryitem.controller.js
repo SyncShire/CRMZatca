@@ -1,6 +1,4 @@
 import InventoryItem from "../mongodb/models/inventoryItem.js";
-import Account from "../mongodb/models/account.js";
-import Invoice from "../mongodb/models/invoice.js";
 import User from "../mongodb/models/user.js";
 import mongoose from "mongoose";
 

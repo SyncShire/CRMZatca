@@ -709,6 +709,8 @@ export const InvoicesPageEdit = () => {
                                                                                                 name: selectedItem.item_name,
                                                                                                 unitPrice: selectedItem.selling_price,
                                                                                                 item_discount_percentage: selectedItem.discount_rate,
+                                                                                                item_code: selectedItem.item_code,
+                                                                                                unitCode: selectedItem.unit,
                                                                                             }
                                                                                             : item
                                                                                     )

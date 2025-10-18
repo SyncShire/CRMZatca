@@ -23,6 +23,7 @@ const InventoryItemSchema = new mongoose.Schema({
     },
     {timestamps: true}
 );
-const inventoryItemModel = mongoose.model("InventoryItem", InventoryItemSchema);
+const inventoryItemModel =
+    mongoose.models.InventoryItem || mongoose.model("InventoryItem", InventoryItemSchema);
 
 export default inventoryItemModel;
