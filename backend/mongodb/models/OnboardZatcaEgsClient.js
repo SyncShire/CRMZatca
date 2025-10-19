@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const OnboardZatcaEgsClientSchema = new mongoose.Schema({
   otp: { type: String, required: true },
-  egs_client_name: { type: String, required: true },
+  egs_client_name: { type: String, required: true, unique: true },
   vat_registration_number: { type: String, required: true, unique: true },
   city: { type: String, required: true },
   address: { type: String, required: true },

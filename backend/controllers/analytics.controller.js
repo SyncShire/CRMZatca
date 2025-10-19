@@ -1,5 +1,7 @@
 import express from "express";
 import Invoice from "../mongodb/models/invoice.js";
+import InventoryItem from "../mongodb/models/inventoryitem.js";
+import Helper from "../helpers/Helper.js";
 
 
 const getMonthlyIncomeDetails = async (req, res) => {
@@ -82,5 +84,129 @@ const getInvoiceStatusDetails = async (req, res) => {
     }
 };
 
+const getMostStockItems = async (req, res) => {
+    try {
+        const limit = parseInt(req.query.limit) || 8; // allow ?limit=10
 
-export {getMonthlyIncomeDetails, getInvoiceStatusDetails};
+        const items = await InventoryItem.aggregate([
+            {$sort: {current_stock: -1}}, // highest first
+            {$limit: limit},
+            {
+                $project: {
+                    _id: 0,
+                    item_name: 1,
+                    item_code: 1,
+                    current_stock: 1,
+                    category: 1,
+                },
+            },
+        ]);
+
+        // Convert to object for frontend chart usage
+        const result = {};
+        items.forEach((item) => {
+            result[item.item_name] = item.current_stock;
+        });
+
+        res.status(200).json(result);
+    } catch (error) {
+        console.error("Error fetching most stocked items:", error);
+        res.status(500).json({message: "Server error", error});
+    }
+};
+
+const getLeastStockItems = async (req, res) => {
+    try {
+        const limit = parseInt(req.query.limit) || 8; // allow ?limit=10
+
+        const items = await InventoryItem.aggregate([
+            {$sort: {current_stock: 1}}, // lowest first
+            {$limit: limit},
+            {
+                $project: {
+                    _id: 0,
+                    item_name: 1,
+                    item_code: 1,
+                    current_stock: 1,
+                    category: 1,
+                },
+            },
+        ]);
+
+        // Convert to object for frontend chart usage
+        const result = {};
+        items.forEach((item) => {
+            result[item.item_name] = item.current_stock;
+        });
+
+        res.status(200).json(result);
+    } catch (error) {
+        console.error("Error fetching least stocked items:", error);
+        res.status(500).json({message: "Server error", error});
+    }
+};
+
+const getInventoryValue = async (req, res) => {
+    try {
+        const result = await InventoryItem.aggregate([
+            {
+                $group: {
+                    _id: null,
+                    totalValue: {
+                        $sum: {$multiply: ["$cost_price", "$current_stock"]},
+                    },
+                },
+            },
+        ]);
+
+        res.status(200).json({
+            totalValue: Helper.roundHalfUp(result[0]?.totalValue, 2) || 0,
+        });
+    } catch (error) {
+        console.error("Error fetching inventory value:", error);
+        res.status(500).json({message: "Server error", error});
+    }
+};
+
+const getPotentialRevenue = async (req, res) => {
+    try {
+        const result = await InventoryItem.aggregate([
+            {
+                $addFields: {
+                    effectivePrice: {
+                        $multiply: [
+                            "$selling_price",
+                            {$subtract: [1, {$divide: ["$discount_rate", 100]}]},
+                            {$add: [1, {$divide: ["$tax_rate", 100]}]},
+                        ],
+                    },
+                },
+            },
+            {
+                $group: {
+                    _id: null,
+                    totalRevenue: {
+                        $sum: {$multiply: ["$effectivePrice", "$current_stock"]},
+                    },
+                },
+            },
+        ]);
+
+        res.status(200).json({
+            totalRevenue: Helper.roundHalfUp(result[0]?.totalRevenue, 2) || 0,
+        });
+    } catch (error) {
+        console.error("Error fetching potential revenue:", error);
+        res.status(500).json({message: "Server error", error});
+    }
+};
+
+
+export {
+    getMonthlyIncomeDetails,
+    getInvoiceStatusDetails,
+    getLeastStockItems,
+    getMostStockItems,
+    getInventoryValue,
+    getPotentialRevenue
+};

@@ -1,6 +1,7 @@
 import InventoryItem from "../mongodb/models/inventoryItem.js";
 import User from "../mongodb/models/user.js";
 import mongoose from "mongoose";
+import Helper from "../helpers/Helper.js";
 
 const getAllInventoryItems = async (req, res) => {
     try {
@@ -109,9 +110,9 @@ const createInventoryItem = async (req, res) => {
         if (!item_name || !unit) {
             return res.status(400).json({message: "Missing required fields"});
         }
+        const allIds = await InventoryItem.find().sort({ id: 1 }).select("id");
 
-        const maxIdInventoryItem = await InventoryItem.findOne().sort({id: -1}).select("id");
-        const nextId = maxIdInventoryItem ? parseInt(maxIdInventoryItem.id) + 1 : 1;
+        const nextId =Helper.getNextIdForModel(allIds)
         // Generate item_code in format ITM00001
         const itemCode = `ITM000${String(nextId)}`;
 
@@ -199,6 +200,7 @@ const updateInventoryItem = async (req, res) => {
         if (cost_price) updatedFields.cost_price = cost_price;
         if (selling_price) updatedFields.selling_price = selling_price;
         if (tax_rate) updatedFields.tax_rate = tax_rate;
+        if (current_stock) updatedFields.current_stock = current_stock;
         if (discount_rate) updatedFields.discount_rate = discount_rate;
 
         const updatedInventoryItem = await InventoryItem.findByIdAndUpdate(

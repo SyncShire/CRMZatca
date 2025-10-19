@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
 
 const InventoryItemSchema = new mongoose.Schema({
-        id: {type: String},
+        id: {type: String, unique: true},
         // partyIdentification
         item_code: {type: String, required: true, unique: true},
-        item_name: {type: String, required: true},
+        item_name: {type: String, required: true, unique: true},
         description: {type: String},
         category: {type: String}, // e.g., "Electronics", "Consumables"
         unit: {type: String, default: "PCE"}, // e.g., pcs, kg, box

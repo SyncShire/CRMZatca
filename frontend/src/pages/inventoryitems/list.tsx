@@ -12,9 +12,13 @@ import {
     useTable,
 } from "@refinedev/antd";
 import {EyeOutlined, SearchOutlined} from "@ant-design/icons";
-import {Avatar, Flex, Input, Select, Table, Typography} from "antd";
+import {Avatar, Col, Flex, Input, Row, Select, Table, Typography} from "antd";
 import {getRandomColorFromString} from "@/utils/get-random-color";
 import type {InventoryItem, Invoice} from "@/types";
+import LeastStockPieChart from "@/components/charts/LeastStockPieChart"
+import MostStockPieChart from "@/components/charts/MostStockPieChart"
+import InventoryValueCard from "@/components/charts/InventoryValueCard";
+import InventoryPotentialRevenueCard from "@/components/charts/InventoryPotentialRevenueCard";
 
 export const InventoryItemsPageList = ({children}: PropsWithChildren) => {
     const go = useGo();
@@ -53,6 +57,20 @@ export const InventoryItemsPageList = ({children}: PropsWithChildren) => {
 
     return (
         <>
+            <Row gutter={[16, 16]}>
+                <Col xs={24} md={6}>
+                    <LeastStockPieChart />
+                </Col>
+                <Col xs={24} md={6}>
+                    <MostStockPieChart />
+                </Col>
+                <Col xs={24} md={6}>
+                    <InventoryValueCard />
+                </Col>
+                <Col xs={24} md={6}>
+                    <InventoryPotentialRevenueCard />
+                </Col>
+            </Row>
             <List
                 title="Inventory"
                 headerButtons={() => {
