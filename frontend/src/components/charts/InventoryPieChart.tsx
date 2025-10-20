@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Card, Spin} from "antd";
-import {useList} from "@refinedev/core";
+import {useList, useNavigation} from "@refinedev/core";
 import {
     PieChart,
     Pie,
@@ -20,62 +20,6 @@ interface InventoryPieChartProps {
     valueField?: string; // backend field for value (default "current_stock")
     nameField?: string; // backend field for label (default "item_name")
 }
-
-const renderActiveShape = (props: any) => {
-    const {
-        cx,
-        cy,
-        midAngle,
-        innerRadius,
-        outerRadius,
-        startAngle,
-        endAngle,
-        fill,
-        payload,
-        percent,
-        value,
-    } = props;
-    const RADIAN = Math.PI / 180;
-    const sin = Math.sin(-RADIAN * midAngle);
-    const cos = Math.cos(-RADIAN * midAngle);
-    const sx = cx + (outerRadius + 10) * cos;
-    const sy = cy + (outerRadius + 10) * sin;
-    const mx = cx + (outerRadius + 30) * cos;
-    const my = cy + (outerRadius + 30) * sin;
-
-    return (
-        <g>
-            <Sector
-                cx={cx}
-                cy={cy}
-                innerRadius={innerRadius}
-                outerRadius={outerRadius + 10}
-                startAngle={startAngle}
-                endAngle={endAngle}
-                fill={fill}
-            />
-            <path d={`M${sx},${sy}L${mx},${my}`} stroke={fill} fill="none"/>
-            <circle cx={mx} cy={my} r={3} fill={fill} stroke="none"/>
-            <text
-                x={mx + (cos >= 0 ? 1 : -1) * 12}
-                y={my}
-                textAnchor={cos >= 0 ? "start" : "end"}
-                fill="#999"
-            >
-                {/*{payload?.name}*/}
-            </text>
-            <text
-                x={mx + (cos >= 0 ? 1 : -1) * 12}
-                y={my + 16}
-                textAnchor={cos >= 0 ? "start" : "end"}
-                fill="#999"
-            >
-                {`${(percent * 100).toFixed(0)}%`}
-            </text>
-        </g>
-    );
-};
-
 const InventoryPieChart: React.FC<InventoryPieChartProps> = ({
                                                                  title,
                                                                  resource,
@@ -115,7 +59,77 @@ const InventoryPieChart: React.FC<InventoryPieChartProps> = ({
             setActiveIndex(index);
         };
 
+        const {push} = useNavigation();
+        const handleSectorClick = (data: any) => {
+            const clickedItem = data?.name; // or data.item_name depending on your chartData mapping
+            if (clickedItem) {
+                const query = new URLSearchParams();
+                query.append("filters[0][field]", "item_name");
+                query.append("filters[0][operator]", "eq");
+                query.append("filters[0][value]", clickedItem);
+
+                push(`/inventoryitems?${query.toString()}`);
+            }
+        };
+
+    const renderActiveShape = (props: any) => {
+        const {
+            cx,
+            cy,
+            midAngle,
+            innerRadius,
+            outerRadius,
+            startAngle,
+            endAngle,
+            fill,
+            payload,
+            percent,
+            value,
+        } = props;
+        const RADIAN = Math.PI / 180;
+        const sin = Math.sin(-RADIAN * midAngle);
+        const cos = Math.cos(-RADIAN * midAngle);
+        const sx = cx + (outerRadius + 10) * cos;
+        const sy = cy + (outerRadius + 10) * sin;
+        const mx = cx + (outerRadius + 30) * cos;
+        const my = cy + (outerRadius + 30) * sin;
+
         return (
+            <g>
+                <Sector
+                    cx={cx}
+                    cy={cy}
+                    innerRadius={innerRadius}
+                    outerRadius={outerRadius + 10}
+                    startAngle={startAngle}
+                    endAngle={endAngle}
+                    fill={fill}
+                    onClick={handleSectorClick}
+                />
+                <path d={`M${sx},${sy}L${mx},${my}`} stroke={fill} fill="none"/>
+                <circle cx={mx} cy={my} r={3} fill={fill} stroke="none"/>
+                <text
+                    x={mx + (cos >= 0 ? 1 : -1) * 12}
+                    y={my}
+                    textAnchor={cos >= 0 ? "start" : "end"}
+                    fill="#999"
+                >
+                    {/*{payload?.name}*/}
+                </text>
+                <text
+                    x={mx + (cos >= 0 ? 1 : -1) * 12}
+                    y={my + 16}
+                    textAnchor={cos >= 0 ? "start" : "end"}
+                    fill="#999"
+                >
+                    {`${(percent * 100).toFixed(0)}%`}
+                </text>
+            </g>
+        );
+    };
+
+
+    return (
             <Card
                 title={title}
                 size={"small"}
@@ -140,9 +154,10 @@ const InventoryPieChart: React.FC<InventoryPieChartProps> = ({
                                 outerRadius={55} // slightly smaller
                                 paddingAngle={2}
                                 onMouseEnter={onPieEnter}
+                                onClick={handleSectorClick}
                             >
                                 {chartData.map((entry) => (
-                                    <Cell key={entry.name} fill={entry.color}/>
+                                    <Cell key={entry.name} fill={entry.color} style={{cursor: "pointer"}}/>
                                 ))}
                             </Pie>
                             <Tooltip/>

@@ -1,6 +1,6 @@
 import React from "react";
 import { Card, Spin } from "antd";
-import { useList } from "@refinedev/core";
+import {useList, useNavigation} from "@refinedev/core";
 import {
     BarChart,
     Bar,
@@ -70,6 +70,20 @@ const LeastStockBar: React.FC<LeastStockBarProps> = ({
             color: colorPalette[index % colorPalette.length],
         }));
 
+    const { push } = useNavigation();
+
+    const handleBarClick = (data: any) => {
+        const clickedItem = data?.name; // or data.item_name depending on your chartData mapping
+        if (clickedItem) {
+            const query = new URLSearchParams();
+            query.append("filters[0][field]", "item_name");
+            query.append("filters[0][operator]", "eq");
+            query.append("filters[0][value]", clickedItem);
+
+            push(`/inventoryitems?${query.toString()}`);
+        }
+    };
+
     return (
         <Card
             title={title}
@@ -92,7 +106,7 @@ const LeastStockBar: React.FC<LeastStockBarProps> = ({
                         <XAxis dataKey="name" />
                         <YAxis />
                         <Tooltip />
-                        <Bar dataKey="value" radius={[6, 6, 0, 0]}>
+                        <Bar dataKey="value" radius={[6, 6, 0, 0]} onClick={handleBarClick}>
                             {chartData.map((entry, index) => (
                                 <Cell key={`cell-${index}`} fill={entry.color} />
                             ))}
