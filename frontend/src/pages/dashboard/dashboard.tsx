@@ -7,6 +7,7 @@ import LeastStockPieChart from "@/components/charts/LeastStockPieChart";
 import MostStockPieChart from "@/components/charts/MostStockPieChart";
 import InventoryValueCard from "@/components/charts/InventoryValueCard";
 import InventoryPotentialRevenueCard from "@/components/charts/InventoryPotentialRevenueCard";
+import LeastStockBar from "@/components/charts/LeastStockBar";
 
 export const DashboardPage: React.FC = () => {
     return (
@@ -36,6 +37,11 @@ export const DashboardPage: React.FC = () => {
                     </Col>
                     <Col xs={24} lg={6}>
                         <InventoryPotentialRevenueCard/>
+                    </Col>
+                </Row>
+                <Row gutter={[16, 16]}>
+                    <Col xs={24} md={24}>
+                        <LeastStockBar/>
                     </Col>
                 </Row>
             </Card>

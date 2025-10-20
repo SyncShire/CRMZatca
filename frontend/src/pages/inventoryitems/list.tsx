@@ -19,6 +19,7 @@ import LeastStockPieChart from "@/components/charts/LeastStockPieChart"
 import MostStockPieChart from "@/components/charts/MostStockPieChart"
 import InventoryValueCard from "@/components/charts/InventoryValueCard";
 import InventoryPotentialRevenueCard from "@/components/charts/InventoryPotentialRevenueCard";
+import LeastStockBar from "@/components/charts/LeastStockBar";
 
 export const InventoryItemsPageList = ({children}: PropsWithChildren) => {
     const go = useGo();
@@ -320,6 +321,11 @@ export const InventoryItemsPageList = ({children}: PropsWithChildren) => {
                 </Table>
             </List>
             {children}
+            <Row gutter={[16, 16]}>
+                <Col xs={24} md={24}>
+                    <LeastStockBar/>
+                </Col>
+            </Row>
         </>
     );
 };
