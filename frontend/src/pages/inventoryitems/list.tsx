@@ -193,7 +193,7 @@ export const InventoryItemsPageList = ({children}: PropsWithChildren) => {
                         render={(_, record: InventoryItem) => {
                             return (
                                 <TagField
-                                    value={`${defaultCurrencySymbol} ${record.current_stock}`}
+                                    value={`${record.current_stock}`}
                                     color={
                                         record.current_stock === 0
                                             ? "volcano"
