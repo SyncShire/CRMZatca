@@ -59,18 +59,6 @@ export const ClientsPageList = ({children}: PropsWithChildren) => {
 
     return (
         <>
-            <Card
-                bordered={true}
-                styles={{body: {padding: 0}}}
-                title={
-                    <Flex gap={12} align="center">
-                        <ShopOutlined/>
-                        <Typography.Text>Invoice Statuses</Typography.Text>
-                    </Flex>
-                }
-            >
-
-            </Card>
             <List
                 title="Customers"
                 headerButtons={() => {

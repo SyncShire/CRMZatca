@@ -13,14 +13,14 @@ export const LeastStockRadial: React.FC = () => {
     const title = "Least Stock";
 
     const colorPalette = [
-        "#4E79A7",
-        "#F28E2B",
-        "#E15759",
-        "#76B7B2",
-        "#59A14F",
-        "#EDC948",
+        "#8884d8",
+        "#83a6ed",
+        "#8dd1e1",
+        "#82ca9d",
+        "#a4de6c",
+        "#d0ed57",
+        "#ffc658",
         "#B07AA1",
-        "#FF9DA7",
     ];
     const maxItems = 8;
     const valueField = "current_stock";

@@ -13,6 +13,7 @@ import QRCode from "qrcode";
 import React from "react";
 import {Font} from "@react-pdf/renderer";
 import {styles} from "./stylesheet";
+import {roundHalfUp} from "@/utils/helperMethods";
 
 Font.register({
     family: "Amiri",
@@ -39,11 +40,7 @@ type PdfProps = {
     record: Invoice | undefined;
 };
 
-// half-up rounding
-function roundHalfUp(num: number, decimals = 2): number {
-    const factor = Math.pow(10, decimals);
-    return Math.round(num * factor) / factor;
-}
+
 
 // return parts for display; decimals param controls fractional digits
 function formatNumberParts(value: number | string | undefined, decimals = 2) {
