@@ -35,9 +35,7 @@ export const InvoicesPageShow = () => {
 
   const invoice = queryResult?.data?.data;
   const loading = queryResult?.isLoading;
-  const logoUrl = invoice?.account?.logo
-    ? `${API_URL}${invoice?.account?.logo}`
-    : undefined;
+  const logoUrl = invoice?.account?.logo || undefined;
 
   const { show, visible, close } = useModal();
 
@@ -45,21 +43,21 @@ export const InvoicesPageShow = () => {
     <>
       <Show
         title="Invoices"
-        headerButtons={() => (
-          <>
-            <Button
-              disabled={!invoice}
-              icon={<FilePdfOutlined />}
-              onClick={(event) => {
-                event.stopPropagation();
-                setRecord(invoice);
-                show();
-              }}
-            >
-              Preview PDF
-            </Button>
-          </>
-        )}
+        // headerButtons={() => (
+        //   <>
+        //     <Button
+        //       disabled={!invoice}
+        //       icon={<FilePdfOutlined />}
+        //       onClick={(event) => {
+        //         event.stopPropagation();
+        //         setRecord(invoice);
+        //         show();
+        //       }}
+        //     >
+        //       Preview PDF
+        //     </Button>
+        //   </>
+        // )}
         contentProps={{
           styles: {
             body: {

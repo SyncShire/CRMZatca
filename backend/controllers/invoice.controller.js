@@ -26,6 +26,10 @@ const getAllInvoices = async (req, res) => {
         const {
             _start,
             _end,
+            q,
+            invoiceDate_gte,
+            invoiceDate_lte,
+            "invoice.invoiceDate": invoiceDates,
             "pagination[page]": page,
             "pagination[pageSize]": pageSize,
         } = req.query;
@@ -44,14 +48,43 @@ const getAllInvoices = async (req, res) => {
             options.sort[_sort] = _order === "desc" ? -1 : 1;
         }
 
+        if (q) {
+            query.$or = [
+                {name: {$regex: new RegExp(q, "i")}},
+                {custom_id: {$regex: new RegExp(q, "i")}},
+            ];
+        }
+
+        // ✅ Date range filter
+        if (invoiceDates) {
+            const datesArray = Array.isArray(invoiceDates) ? invoiceDates : [invoiceDates];
+            if (datesArray.length === 2) {
+                const [startDate, endDate] = datesArray.map((d) => new Date(d));
+                if (!isNaN(startDate) && !isNaN(endDate)) {
+                    query.invoiceDate = {$gte: startDate, $lte: endDate};
+                }
+            } else if (datesArray.length === 1) {
+                const exactDate = new Date(datesArray[0]);
+                if (!isNaN(exactDate)) {
+                    // optional: match all invoices for that day
+                    const nextDay = new Date(exactDate);
+                    nextDay.setDate(exactDate.getDate() + 1);
+                    query.invoiceDate = {$gte: exactDate, $lt: nextDay};
+                }
+            }
+        }
+
+
         const {
             "filters[invoice_name][$containsi]": invoiceNameFilter,
             "filters[phoneNumber][$containsi]": phoneFilter,
+            "filters[status][$containsi]": statusFilter,
         } = req.query;
 
         if (invoiceNameFilter)
             query.invoice_name = {$regex: new RegExp(invoiceNameFilter, "i")};
         if (phoneFilter) query.phoneNumber = {$regex: new RegExp(phoneFilter, "i")};
+        if (statusFilter) query.status = {$regex: new RegExp(statusFilter, "i")};
         Object.keys(req.query).forEach((key) => {
             if (key.endsWith("_like")) {
                 const field = key.replace("_like", "");
@@ -59,12 +92,15 @@ const getAllInvoices = async (req, res) => {
             }
         });
 
-        const {id, invoice_name, month} = req.query;
+        const {id, invoice_name, status} = req.query;
         if (id) {
             query.id = {$regex: new RegExp(`^${id}$`, "i")};
         }
         if (invoice_name) {
             query.invoice_name = {$regex: new RegExp(`^${invoice_name}$`, "i")}; // Exact match for title, case-insensitive
+        }
+        if (status) {
+            query.status = {$regex: new RegExp(`^${status}$`, "i")}; // Exact match for title, case-insensitive
         }
 
         const {
@@ -370,13 +406,13 @@ const updateInvoice = async (req, res) => {
             await Service.findByIdAndUpdate(service._id, service, {session});
         }
 
-        await handleInventoryUpdate(updatedServices, session);
+        // await handleInventoryUpdate(updatedServices, session);
 
         // Remove deleted services
         if (deletedServices.length > 0) {
             await Service.deleteMany({_id: {$in: deletedServices}}, {session});
         }
-        await handleInventoryUpdate(deletedServices, session, "deleteService");
+        // await handleInventoryUpdate(deletedServices, session, "deleteService");
 
         let totalRounded = roundToTwo(total);
 

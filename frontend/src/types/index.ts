@@ -88,6 +88,12 @@ export type Invoice = {
     invoice_xml_link: string;
 };
 
+export interface InvoiceFilterVariables {
+    q?: string;
+    _id?: string;
+    invoiceDate?: [Date, Date];
+}
+
 export type Service = {
     name: string;
     description: string;
