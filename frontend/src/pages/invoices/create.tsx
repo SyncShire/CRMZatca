@@ -28,11 +28,11 @@ import {
     FileTextOutlined,
     PlusCircleOutlined
 } from "@ant-design/icons";
-import type {Invoice, Service} from "@/types";
+import type {InventoryItem, Invoice, Service} from "@/types";
 import {useStyles} from "./create.styled";
 import {taxTypeDescription} from "./taxTypeDescription";
 import {useLocation} from "react-router-dom";
-import {useGo} from "@refinedev/core";
+import {useGo, useList} from "@refinedev/core";
 
 export const InvoicesPageCreate = () => {
     const go = useGo();
@@ -42,7 +42,7 @@ export const InvoicesPageCreate = () => {
             name: "",
             unitPrice: 0,
             unitCode: "PCE",
-            item_code:"",
+            item_code: "",
             quantity: 0,
             price_without_discount: 0,
             item_discount_percentage: 0,
@@ -78,6 +78,20 @@ export const InvoicesPageCreate = () => {
         optionLabel: "partyLegalEntityRegistrationName",
         optionValue: "_id",
     });
+
+    const {selectProps: selectPropsInventory} = useSelect({
+        resource: "inventoryitems",     // API resource name
+        optionLabel: "item_name",             // what user sees
+        optionValue: "_id",
+        // meta: {
+        //     select: "item_name selling_price", // only fetch needed fields
+        // },
+    });
+
+    const {data} = useList<InventoryItem>({
+        resource: "inventoryitems",
+    });
+    const inventoryData = data?.data || [];
 
     const currencyOptions = [
         {value: "INR", label: "₹ INR"},
@@ -808,18 +822,40 @@ export const InvoicesPageCreate = () => {
                                                                 xs={{span: 7}}
                                                                 className={styles.serviceRowColumn}
                                                             >
-                                                                <Input
+                                                                <Select
+                                                                    {...selectPropsInventory}
                                                                     placeholder="Name"
-                                                                    required={true}
-                                                                    value={service.name}
-                                                                    onChange={(e) => {
-                                                                        setServices((prev) =>
-                                                                            prev.map((item, i) =>
-                                                                                i === index
-                                                                                    ? {...item, name: e.target.value}
-                                                                                    : item
-                                                                            )
-                                                                        );
+                                                                    style={{width: "100%"}}
+                                                                    showSearch={true}
+                                                                    filterOption={(input, option) =>
+                                                                        (option?.label ?? "")
+                                                                            .toString()
+                                                                            .toLowerCase()
+                                                                            .includes(input.toLowerCase())
+                                                                    }
+                                                                    optionLabelProp="label"
+                                                                    options={inventoryData.map(item => ({
+                                                                        label: `${item.item_code}- ${item.item_name}`,
+                                                                        value: item._id,
+                                                                    }))}
+                                                                    onChange={(value) => {
+                                                                        const selectedItem = inventoryData.find(item => item._id === String(value));
+                                                                        if (selectedItem) {
+                                                                            setServices((prev) =>
+                                                                                prev.map((item, i) =>
+                                                                                    i === index
+                                                                                        ? {
+                                                                                            ...item,
+                                                                                            name: selectedItem.item_name,
+                                                                                            unitPrice: selectedItem.selling_price,
+                                                                                            item_discount_percentage: selectedItem.discount_rate,
+                                                                                            item_code: selectedItem.item_code,
+                                                                                            unitCode: selectedItem.unit,
+                                                                                        }
+                                                                                        : item
+                                                                                )
+                                                                            );
+                                                                        }
                                                                     }}
                                                                 />
                                                             </Col>
@@ -938,7 +974,7 @@ export const InvoicesPageCreate = () => {
                                                                 name: "",
                                                                 unitPrice: 0,
                                                                 unitCode: "PCE",
-                                                                item_code:"",
+                                                                item_code: "",
                                                                 quantity: 0,
                                                                 price_without_discount: 0,
                                                                 item_discount_percentage: 0,

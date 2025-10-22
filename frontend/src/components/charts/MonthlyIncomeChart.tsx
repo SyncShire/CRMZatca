@@ -13,7 +13,7 @@ import {
 
 const MonthlyIncomeChart: React.FC = () => {
     const { data, isLoading } = useList({
-        resource: "monthly-income",
+        resource: "analytics/monthly-income",
     });
 
     const { push } = useNavigation();

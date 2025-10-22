@@ -13,7 +13,7 @@ import {
 } from "@refinedev/antd";
 import { EyeOutlined, SearchOutlined } from "@ant-design/icons";
 import { Avatar, Flex, Input, Select, Table, Typography } from "antd";
-import { API_URL } from "@/utils/constants";
+import {roundHalfUp} from "@/utils/helperMethods";
 import { getRandomColorFromString } from "@/utils/get-random-color";
 import type { Account } from "@/types";
 
@@ -212,7 +212,7 @@ export const AccountsPageList = ({ children }: PropsWithChildren) => {
                 currency = invoice.currency;
               });
               return (
-                  <TagField value={`${currencySymbol} ${total}`} color="green" />
+                  <TagField value={`${currencySymbol} ${roundHalfUp(total, 2)}`} color="green" />
                 // <NumberField
                 //   value={total}
                 //   options={{ style: "currency", currency: currency }}

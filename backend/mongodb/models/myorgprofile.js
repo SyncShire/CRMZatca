@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const MyOrgProfileSchema = new mongoose.Schema({
-        id: {type: String},
+        id: {type: String, unique: true},
         // partyIdentification
         partyId: {type: String},                        // id
         partySchemeID: {type: String, default: "CRN"},  // schemeID
@@ -20,7 +20,7 @@ const MyOrgProfileSchema = new mongoose.Schema({
         partyTaxSchemeTaxSchemeId: {type: String}, // taxScheme.id
 
         // partyLegalEntity
-        partyLegalEntityRegistrationName: {type: String},
+        partyLegalEntityRegistrationName: {type: String, unique: true},
 
         // other fields
         logo: {type: String, required: false},

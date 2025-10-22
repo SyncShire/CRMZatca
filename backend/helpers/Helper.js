@@ -1,6 +1,26 @@
 import {randomUUID} from "crypto";
 
 class Helper {
+
+    static getNextIdForModel(allIds) {
+        if (!allIds || allIds.length === 0) return 1;
+
+        // Convert to integers and sort
+        const ids = allIds.map(item => parseInt(item.id)).sort((a, b) => a - b);
+
+        let nextId = 1;
+        for (let i = 0; i < ids.length; i++) {
+            if (ids[i] !== nextId) {
+                // gap found
+                break;
+            }
+            nextId++;
+        }
+
+        return nextId;
+    }
+
+
     /**
      * Generate a UUID (v4 by default)
      */

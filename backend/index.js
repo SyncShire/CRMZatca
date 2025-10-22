@@ -23,6 +23,7 @@ import zatcaBackendRouter from "./routes/zatcabackend.routes.js";
 import zatcaComplianceCheckRouter from "./middleware/zatcaComplianceApi.js";
 import zatcaReportInvoiceRouter from "./middleware/zatcaReportingApi.js";
 import embedPdfRouter from "./middleware/embeddedPdf.js";
+import inventoryItemRouter from "./routes/inventoryitem.routes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -46,9 +47,11 @@ app.use("/api/v1/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/v1/currencies", currencyRouter);
 app.use("/api/v1/invoices", invoiceRouter);
 app.use("/api/v1/events", eventRouter);
-app.use("/api/v1/monthly-income", analyticsRouter);
+app.use("/api/v1/analytics", analyticsRouter);
+
 app.use("/api/v1/clientmedias", clientMediaRouter);
 app.use("/api/v1/myorgprofile", myorgprofileRouter);
+app.use("/api/v1/inventoryitems", inventoryItemRouter);
 
 
 app.use("/api/v1/zatca/onboardClient", onboardClientRouter);

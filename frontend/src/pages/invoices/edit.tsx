@@ -25,11 +25,11 @@ import {
 import {Edit} from "@refinedev/antd";
 import {API_URL} from "@/utils/constants";
 import {getRandomColorFromString} from "@/utils/get-random-color";
-import type {Invoice, Service} from "@/types";
+import type {InventoryItem, Invoice, Service} from "@/types";
 import {useStyles} from "./create.styled";
 import {Fragment, useEffect, useState} from "react";
 import dayjs from "dayjs";
-import {useOne} from "@refinedev/core";
+import {useList, useOne} from "@refinedev/core";
 
 export const InvoicesPageEdit = () => {
     const {styles} = useStyles();
@@ -74,6 +74,20 @@ export const InvoicesPageEdit = () => {
         optionLabel: "account_name",
         optionValue: "_id",
     });
+
+    const {selectProps: selectPropsInventory} = useSelect({
+        resource: "inventoryitems",     // API resource name
+        optionLabel: "item_name",             // what user sees
+        optionValue: "_id",
+        // meta: {
+        //     select: "item_name selling_price", // only fetch needed fields
+        // },
+    });
+
+    const {data} = useList<InventoryItem>({
+        resource: "inventoryitems",
+    });
+    const inventoryData = data?.data || [];
 
     const userData = localStorage.getItem("user");
     let userId = "";
@@ -360,7 +374,7 @@ export const InvoicesPageEdit = () => {
     return (
         <Edit
             title="Edit Invoice"
-            saveButtonProps={{...saveButtonProps ,disabled: isDisabled}}
+            saveButtonProps={{...saveButtonProps, disabled: isDisabled}}
             contentProps={{
                 styles: {
                     body: {
@@ -586,7 +600,6 @@ export const InvoicesPageEdit = () => {
                             autoSize={{minRows: 2, maxRows: 6}}/>
                     </Form.Item>
 
-
                     <Divider style={{margin: 0}}/>
                     <div style={{padding: "32px"}}>
                         <Typography.Title
@@ -664,23 +677,48 @@ export const InvoicesPageEdit = () => {
                                                                 xs={{span: 7}}
                                                                 className={styles.serviceRowColumn}
                                                             >
-                                                                <Input
-                                                                    placeholder="Title"
-                                                                    value={service.name}
-                                                                    required={true}
-                                                                    onChange={(e) => {
-                                                                        setServices((prev) =>
-                                                                            prev.map((item, i) =>
-                                                                                i === index
-                                                                                    ? {
-                                                                                        ...item,
-                                                                                        name: e.target.value
-                                                                                    }
-                                                                                    : item
-                                                                            )
-                                                                        );
-                                                                    }}
-                                                                />
+                                                                <Form.Item
+                                                                    label="Name"
+                                                                    name={[index, "name"]}
+                                                                    style={{width: "100%"}}
+                                                                    rules={[{required: true}]}
+                                                                >
+                                                                    <Select
+                                                                        {...selectPropsInventory}
+                                                                        placeholder="Name"
+                                                                        showSearch={true}
+                                                                        filterOption={(input, option) =>
+                                                                            (option?.label ?? "")
+                                                                                .toString()
+                                                                                .toLowerCase()
+                                                                                .includes(input.toLowerCase())
+                                                                        }
+                                                                        optionLabelProp="label"
+                                                                        options={inventoryData.map(item => ({
+                                                                            label: `${item.item_code}- ${item.item_name}`,
+                                                                            value: item._id,
+                                                                        }))}
+                                                                        onChange={(value) => {
+                                                                            const selectedItem = inventoryData.find(item => item._id === String(value));
+                                                                            if (selectedItem) {
+                                                                                setServices((prev) =>
+                                                                                    prev.map((item, i) =>
+                                                                                        i === index
+                                                                                            ? {
+                                                                                                ...item,
+                                                                                                name: selectedItem.item_name,
+                                                                                                unitPrice: selectedItem.selling_price,
+                                                                                                item_discount_percentage: selectedItem.discount_rate,
+                                                                                                item_code: selectedItem.item_code,
+                                                                                                unitCode: selectedItem.unit,
+                                                                                            }
+                                                                                            : item
+                                                                                    )
+                                                                                );
+                                                                            }
+                                                                        }}
+                                                                    />
+                                                                </Form.Item>
                                                             </Col>
                                                             <Col
                                                                 xs={{span: 5}}
@@ -799,7 +837,7 @@ export const InvoicesPageEdit = () => {
                                                     name: "",
                                                     unitPrice: 0,
                                                     unitCode: "",
-                                                    item_code:"",
+                                                    item_code: "",
                                                     quantity: 0,
                                                     price_without_discount: 0,
                                                     item_discount_percentage: 0,

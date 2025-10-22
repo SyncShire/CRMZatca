@@ -62,6 +62,7 @@ import {
     AuditOutlined,
     DashboardOutlined, FieldTimeOutlined,
     ProfileOutlined,
+    DatabaseOutlined
 } from "@ant-design/icons";
 import {useAuth0} from "@auth0/auth0-react";
 import {Login} from "./providers/auth-provider/login";
@@ -71,6 +72,7 @@ import AdminDashboard from "./pages/admin/dashboard";
 import OnboardingClient from "./pages/admin/onboardingclient";
 import ListClients from "./pages/admin/listClients";
 import EditClient from "./pages/admin/editClient";
+import {InventoryItemsPageCreate, InventoryItemsPageEdit, InventoryItemsPageList} from "@/pages/inventoryitems/";
 
 const App: React.FC = () => {
     const {isLoading, user, logout, getIdTokenClaims} = useAuth0();
@@ -114,6 +116,13 @@ const App: React.FC = () => {
                                 icon: <FolderOutlined/>,
                                 meta: {
                                     label: "Archive",
+                                },
+                            },
+                            {
+                                name: "Inventory Management",
+                                icon: <DatabaseOutlined/>,
+                                meta: {
+                                    label: "Inventory Management",
                                 },
                             },
                             {
@@ -193,6 +202,18 @@ const App: React.FC = () => {
                                 },
                                 icon: <ProfileOutlined/>,
                             },
+                            {
+                                name: "inventoryitems",
+                                list: "/inventoryitems",
+                                show: "/inventoryitems/:id",
+                                create: "/inventoryitems/new",
+                                edit: "/inventoryitems/:id/edit",
+                                meta: {
+                                    label: "Inventory",
+                                    parent: "Inventory Management",
+                                },
+                                icon: <DatabaseOutlined/>,
+                            },
                         ]}
                         notificationProvider={useNotificationProvider}
                         options={{
@@ -202,156 +223,160 @@ const App: React.FC = () => {
                         }}
                     >
                         <AuthGuard>
-                        <Routes>
-                            <Route
-                                element={
-                                    <Authenticated
-                                        key="authenticated-routes"
-                                        fallback={<CatchAllNavigate to="/login"/>}
-                                    >
-                                        <ThemedLayoutV2
-                                            Header={() => <Header/>}
-                                            Sider={(props) => <ThemedSiderV2 {...props} fixed/>}
-                                            initialSiderCollapsed={false}
-                                            Title={ThemedTitleV2}
+                            <Routes>
+                                <Route
+                                    element={
+                                        <Authenticated
+                                            key="authenticated-routes"
+                                            fallback={<CatchAllNavigate to="/login"/>}
                                         >
-                                            <div
-                                                style={{
-                                                    maxWidth: "1280px",
-                                                    padding: "24px",
-                                                    margin: "0 auto",
-                                                }}
+                                            <ThemedLayoutV2
+                                                Header={() => <Header/>}
+                                                Sider={(props) => <ThemedSiderV2 {...props} fixed/>}
+                                                initialSiderCollapsed={false}
+                                                Title={ThemedTitleV2}
+                                            >
+                                                <div
+                                                    style={{
+                                                        maxWidth: "1280px",
+                                                        padding: "24px",
+                                                        margin: "0 auto",
+                                                    }}
+                                                >
+                                                    <Outlet/>
+                                                </div>
+                                            </ThemedLayoutV2>
+                                        </Authenticated>
+                                    }
+                                >
+                                    <Route path="/" element={<DashboardPage/>}/>
+
+
+                                    <Route path="/admin" element={<AdminPage/>}/>
+                                    <Route path="/admin/dashboard" element={<AdminDashboard/>}/>
+                                    <Route path="/admin/onboardingclient" element={<OnboardingClient/>}/>
+                                    <Route path="/admin/listClients" element={<ListClients/>}/>
+                                    <Route path="/admin/editClient/:id" element={<EditClient/>}/>
+
+                                    <Route
+                                        path="/accounts"
+                                        element={
+                                            <AccountsPageList>
+                                                <Outlet/>
+                                            </AccountsPageList>
+                                        }
+                                    >
+                                        <Route index element={null}/>
+                                        <Route path="new" element={<AccountsPageCreate/>}/>
+                                    </Route>
+                                    <Route
+                                        path="/accounts/:id/edit"
+                                        element={<AccountsPageEdit/>}
+                                    />
+
+                                    <Route
+                                        path="/accounts"
+                                        element={
+                                            <AccountsPageList>
+                                                <Outlet/>
+                                            </AccountsPageList>
+                                        }
+                                    >
+                                        <Route index element={null}/>
+                                        <Route path="new" element={<AccountsPageCreate/>}/>
+                                    </Route>
+                                    <Route
+                                        path="/accounts/:id/edit"
+                                        element={<AccountsPageEdit/>}
+                                    />
+
+                                    <Route
+                                        path="/clients"
+                                        element={
+                                            <ClientsPageList>
+                                                <Outlet/>
+                                            </ClientsPageList>
+                                        }
+                                    >
+                                        <Route index element={null}/>
+                                        <Route path="new" element={<ClientsPageCreate/>}/>
+                                    </Route>
+                                    <Route path="/clients/:id/edit" element={<ClientsPageEdit/>}/>
+
+                                    <Route path="/invoices">
+                                        <Route index element={<InvoicePageList/>}/>
+                                        <Route path="new" element={<InvoicesPageCreate/>}/>
+                                        <Route path=":id" element={<InvoicesPageShow/>}/>
+                                        <Route path=":id/edit" element={<InvoicesPageEdit/>}/>
+                                    </Route>
+
+                                    <Route
+                                        path="/events"
+                                        element={
+                                            <EventsPageList>
+                                                <Outlet/>
+                                            </EventsPageList>
+                                        }
+                                    >
+                                        <Route index element={null}/>
+                                        <Route path="new" element={<EventsPageCreate/>}/>
+                                    </Route>
+                                    <Route path="/events/:id/edit" element={<EventsPageEdit/>}/>
+
+                                    <Route
+                                        path="/clientmedias"
+                                        element={
+                                            <ClientMediaPageList>
+                                                <Outlet/>
+                                            </ClientMediaPageList>
+                                        }
+                                    >
+                                        <Route index element={null}/>
+                                        <Route path="new" element={<ClientMediaPageCreate/>}/>
+                                    </Route>
+                                    <Route path="/clients/:id/edit" element={<ClientMediaPageEdit/>}/>
+
+                                    <Route path="/admin" element={<AdminPage/>}/>
+
+                                    <Route path="/myorgprofile">
+                                        <Route index element={<MyOrgProfilePageEdit/>}/>
+                                        <Route path=":id/edit" element={<MyOrgProfilePageEdit/>}/>
+                                    </Route>
+
+                                    <Route path="/inventoryitems">
+                                        <Route index element={<InventoryItemsPageList/>}/>
+                                        <Route path="new" element={<InventoryItemsPageCreate/>}/>
+                                        <Route path=":id/edit" element={<InventoryItemsPageEdit/>}/>
+                                    </Route>
+
+
+                                    <Route path="*" element={<ErrorComponent/>}/>
+                                </Route>
+                                <Route
+                                    element={
+                                        <Authenticated key="auth-pages" fallback={<Outlet/>}>
+                                            <NavigateToResource/>
+                                        </Authenticated>
+                                    }
+                                >
+                                    <Route path="/login" element={<Login/>}/>
+                                </Route>
+
+                                <Route
+                                    element={
+                                        <Authenticated key="catch-all">
+                                            <ThemedLayoutV2
+                                                Header={() => <Header/>}
+                                                Sider={() => <ThemedSiderV2 fixed/>}
                                             >
                                                 <Outlet/>
-                                            </div>
-                                        </ThemedLayoutV2>
-                                    </Authenticated>
-                                }
-                            >
-                                <Route path="/" element={<DashboardPage />} />
-
-
-
-
-                                <Route path="/admin" element={<AdminPage />} />
-                                <Route path="/admin/dashboard" element={<AdminDashboard />} />
-                                <Route path="/admin/onboardingclient" element={<OnboardingClient />} />
-                                <Route path="/admin/listClients" element={<ListClients />} />
-                                <Route path="/admin/editClient/:id" element={<EditClient />} />
-
-                                <Route
-                                    path="/accounts"
-                                    element={
-                                        <AccountsPageList>
-                                            <Outlet/>
-                                        </AccountsPageList>
+                                            </ThemedLayoutV2>
+                                        </Authenticated>
                                     }
                                 >
-                                    <Route index element={null}/>
-                                    <Route path="new" element={<AccountsPageCreate/>}/>
+                                    <Route path="*" element={<ErrorComponent/>}/>
                                 </Route>
-                                <Route
-                                    path="/accounts/:id/edit"
-                                    element={<AccountsPageEdit/>}
-                                />
-
-                                <Route
-                                    path="/accounts"
-                                    element={
-                                        <AccountsPageList>
-                                            <Outlet/>
-                                        </AccountsPageList>
-                                    }
-                                >
-                                    <Route index element={null}/>
-                                    <Route path="new" element={<AccountsPageCreate/>}/>
-                                </Route>
-                                <Route
-                                    path="/accounts/:id/edit"
-                                    element={<AccountsPageEdit/>}
-                                />
-
-                                <Route
-                                    path="/clients"
-                                    element={
-                                        <ClientsPageList>
-                                            <Outlet/>
-                                        </ClientsPageList>
-                                    }
-                                >
-                                    <Route index element={null}/>
-                                    <Route path="new" element={<ClientsPageCreate/>}/>
-                                </Route>
-                                <Route path="/clients/:id/edit" element={<ClientsPageEdit/>}/>
-
-                                <Route path="/invoices">
-                                    <Route index element={<InvoicePageList/>}/>
-                                    <Route path="new" element={<InvoicesPageCreate/>}/>
-                                    <Route path=":id" element={<InvoicesPageShow/>}/>
-                                    <Route path=":id/edit" element={<InvoicesPageEdit/>}/>
-                                </Route>
-
-                                <Route
-                                    path="/events"
-                                    element={
-                                        <EventsPageList>
-                                            <Outlet/>
-                                        </EventsPageList>
-                                    }
-                                >
-                                    <Route index element={null}/>
-                                    <Route path="new" element={<EventsPageCreate/>}/>
-                                </Route>
-                                <Route path="/events/:id/edit" element={<EventsPageEdit/>}/>
-
-                                <Route
-                                    path="/clientmedias"
-                                    element={
-                                        <ClientMediaPageList>
-                                            <Outlet/>
-                                        </ClientMediaPageList>
-                                    }
-                                >
-                                    <Route index element={null}/>
-                                    <Route path="new" element={<ClientMediaPageCreate/>}/>
-                                </Route>
-                                <Route path="/clients/:id/edit" element={<ClientMediaPageEdit/>}/>
-
-                                <Route path="/admin" element={<AdminPage />} />
-
-                                <Route path="/myorgprofile">
-                                    <Route index element={<MyOrgProfilePageEdit />} />
-                                    <Route path=":id/edit" element={<MyOrgProfilePageEdit/>}/>
-                                </Route>
-
-
-                                <Route path="*" element={<ErrorComponent/>}/>
-                            </Route>
-                            <Route
-                                element={
-                                    <Authenticated key="auth-pages" fallback={<Outlet/>}>
-                                        <NavigateToResource/>
-                                    </Authenticated>
-                                }
-                            >
-                                <Route path="/login" element={<Login/>}/>
-                            </Route>
-
-                            <Route
-                                element={
-                                    <Authenticated key="catch-all">
-                                        <ThemedLayoutV2
-                                            Header={() => <Header/>}
-                                            Sider={() => <ThemedSiderV2 fixed/>}
-                                        >
-                                            <Outlet/>
-                                        </ThemedLayoutV2>
-                                    </Authenticated>
-                                }
-                            >
-                                <Route path="*" element={<ErrorComponent/>}/>
-                            </Route>
-                        </Routes>
+                            </Routes>
                         </AuthGuard>
                         <UnsavedChangesNotifier/>
                         <DocumentTitleHandler/>

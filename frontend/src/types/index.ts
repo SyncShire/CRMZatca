@@ -88,6 +88,12 @@ export type Invoice = {
     invoice_xml_link: string;
 };
 
+export interface InvoiceFilterVariables {
+    q?: string;
+    _id?: string;
+    invoiceDate?: [Date, Date];
+}
+
 export type Service = {
     name: string;
     description: string;
@@ -100,6 +106,26 @@ export type Service = {
     item_discount_amount: number;
     totalPrice: number;
 };
+export type InventoryItem = {
+    _id: string;
+    id: string;
+    item_code: string;
+    item_name: string;
+    description: string;
+    category: string; // e.g., "Electronics", "Consumables"
+    unit: string; // e.g., pcs, kg, box
+    sku: string;
+    barcode: string;
+    is_service: boolean;
+
+// Pricing
+    cost_price: number;
+    selling_price: number;
+    tax_rate: number; // %
+    discount_rate: number;
+    current_stock: number;
+    userId: string;
+}
 
 export type MyOrgProfile = {
     id: string;
