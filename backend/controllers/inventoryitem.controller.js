@@ -110,9 +110,9 @@ const createInventoryItem = async (req, res) => {
         if (!item_name || !unit) {
             return res.status(400).json({message: "Missing required fields"});
         }
-        const allIds = await InventoryItem.find().sort({ id: 1 }).select("id");
+        const allIds = await InventoryItem.find().sort({id: 1}).select("id");
 
-        const nextId =Helper.getNextIdForModel(allIds)
+        const nextId = Helper.getNextIdForModel(allIds)
         // Generate item_code in format ITM00001
         const itemCode = `ITM000${String(nextId)}`;
 

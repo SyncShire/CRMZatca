@@ -2,14 +2,14 @@ import React from "react";
 import InventoryPieChart from "./InventoryPieChart";
 
 const bluePalette = [
-    "#E7AD73",
-    "#DE8F3E",
-    "#DA7F25",
-    "#B3691E",
-    "#8C5218",
-    "#643B11",
-    "#3D240A",
-    "#160D04",
+    "#4596E8",
+    "#6FADEC",
+    "#4696E7",
+    "#1C78D4",
+    "#1869B9",
+    "#135290",
+    "#0D3B68",
+    "#08243F",
 ];
 
 const LeastStockPieChart: React.FC = () => {

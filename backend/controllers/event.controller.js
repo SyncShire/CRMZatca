@@ -4,6 +4,8 @@ import * as dotenv from "dotenv";
 import dayjs from "dayjs";
 
 import mongoose from "mongoose";
+import InventoryItem from "../mongodb/models/inventoryitem.js";
+import Helper from "../helpers/Helper.js";
 dotenv.config();
 
 
@@ -121,8 +123,9 @@ const createEvent = async (req, res) => {
             return res.status(404).json({ message: "User Not Found" });
         }
 
-        const maxIdEvent = await Event.findOne().sort({ id: -1 }).select("id");
-        const nextId = maxIdEvent ? parseInt(maxIdEvent.id) + 1 : 1;
+        const allIds = await Event.find().sort({id: 1}).select("id");
+
+        const nextId = Helper.getNextIdForModel(allIds)
 
         const newEvent = new Event({
             id: nextId,
@@ -141,7 +144,7 @@ const createEvent = async (req, res) => {
             .json({ message: "Event created successfully", data: savedEvent });
     } catch (error) {
         if (error.code === 11000) {
-            return res.status(409).json({ message: "Owner email already exists" });
+            return res.status(409).json({ message: "Conflicting details duplicates not allowed" });
         }
         res.status(500).json({ message: error.message });
     }
