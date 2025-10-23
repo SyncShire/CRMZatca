@@ -53,9 +53,7 @@ function formatNumberParts(value: number | string | undefined, decimals = 2) {
 }
 
 export const PdfLayout: React.FC<PdfProps> = ({record}) => {
-    const logoUrl = record?.account?.logo
-        ? `${API_URL}${record?.account?.logo}`
-        : undefined;
+    const logoUrl = record?.account?.logo || undefined;
 
     const summaryData = [
         { en: "Sub Total", ar: "الإجمالي", value: record?.subtotal },
@@ -83,7 +81,7 @@ export const PdfLayout: React.FC<PdfProps> = ({record}) => {
                             {record?.account?.logo && (
                                 <Image src={record.account.logo} style={styles.logo}/>
                             )}
-                            <Text style={styles.companyName}>{"SyncShire Enterprises"}</Text>
+                            <Text style={styles.companyName}>{record?.myOrgProfile?.partyLegalEntityRegistrationName}</Text>
                         </View>
 
                         <View style={{flex: 2, justifyContent: "center"}}>
@@ -121,6 +119,7 @@ export const PdfLayout: React.FC<PdfProps> = ({record}) => {
                                     arabic: "تاريخ التسليم"
                                 },
                                 {label: "Tax Category", value: record?.tax_category, arabic: "فئة الضريبة"},
+                                {label: "Invoice Type", value: record?.invoice_type, arabic: "فئة الضريبة"},
                                 {label: "Payment Means", value: record?.payment_means, arabic: "طريقة الدفع"},
                                 {label: "Invoice Reference", value: record?.reference_number, arabic: "المرجع"}
                             ].map((row, index) => (
@@ -216,7 +215,7 @@ export const PdfLayout: React.FC<PdfProps> = ({record}) => {
                             // compute displayed parts
                             const qtyParts = formatNumberParts(item.quantity, 2);           // quantities -> 6 decimals
                             const unitPriceParts = formatNumberParts(item.unitPrice, 2);   // money -> 2 decimals
-                            const discountParts = formatNumberParts(item.item_discount_amount, 2);
+                            const discountParts = formatNumberParts(item.item_discount_percentage, 2);
                             const totalParts = formatNumberParts(item.totalPrice, 2);
 
                             return (

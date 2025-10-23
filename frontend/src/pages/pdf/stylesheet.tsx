@@ -43,7 +43,7 @@ export const styles = StyleSheet.create({
         fontWeight: "bold",
         textAlign: "center",
         flexWrap: "wrap",
-        fontFamily: "Helvetica-Bold",
+        fontFamily: "Amiri-Bold",
     },
     qrCode: {
         width: 140,
