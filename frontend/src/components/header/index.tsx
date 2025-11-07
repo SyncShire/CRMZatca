@@ -68,7 +68,7 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = () => {
                             list(key);
                         }}
                         style={{
-                            overflowX: "auto",  // 👈 allows horizontal scroll
+                            // overflowX: "auto",  // 👈 allows horizontal scroll
                             flex: "1 1 auto",
                             minWidth: 0,
                         }}
