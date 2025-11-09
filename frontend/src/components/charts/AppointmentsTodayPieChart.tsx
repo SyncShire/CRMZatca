@@ -5,7 +5,7 @@ import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recha
 import dayjs from "dayjs";
 
 const STATUS_COLORS: Record<string, string> = {
-    new: "#1869B9",       // blue
+    new: "#1869B9",       //  blue
     done: "#4CAF50",      // green
     cancelled: "#E09B2B", // red
 };
