@@ -102,6 +102,7 @@ export const CalendarPage = () => {
             dayjs(p.date).isSame(value, "day"),
         );
         return (
+            <div onClick={() => handleDateSelect(value)} style={{ cursor: "pointer" }}>
             <ul className="events">
                 {listData?.map((item) => (
                     <li key={item.id}>
@@ -114,6 +115,7 @@ export const CalendarPage = () => {
                     </li>
                 ))}
             </ul>
+            </div>
         );
     };
 
@@ -121,7 +123,6 @@ export const CalendarPage = () => {
         <>
             <Calendar
                 onPanelChange={panelChange}
-                onSelect={handleDateSelect}
                 dateCellRender={dateCellRender}
                 monthCellRender={monthCellRender}
             />
