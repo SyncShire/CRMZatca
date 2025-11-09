@@ -83,6 +83,7 @@ export const InvoicesPageCreate = () => {
         resource: "inventoryitems",     // API resource name
         optionLabel: "item_name",             // what user sees
         optionValue: "_id",
+        pagination: { mode: "off" }
         // meta: {
         //     select: "item_name selling_price", // only fetch needed fields
         // },
