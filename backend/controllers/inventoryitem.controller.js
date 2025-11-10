@@ -6,7 +6,7 @@ import Helper from "../helpers/Helper.js";
 const getAllInventoryItems = async (req, res) => {
     try {
         const query = {};
-        const options = {sort: {}, limit: 10, skip: 0};
+        const options = {sort: {}, skip: 0};
 
         const {
             _start,
@@ -14,8 +14,8 @@ const getAllInventoryItems = async (req, res) => {
             "pagination[page]": page,
             "pagination[pageSize]": pageSize,
         } = req.query;
-        if (_start) options.skip = parseInt(_start, 10);
-        if (_end) options.limit = parseInt(_end, 10) - options.skip;
+        // if (_start) options.skip = parseInt(_start, 10);
+        // if (_end) options.limit = parseInt(_end, 10) - options.skip;
         if (page && pageSize) {
             options.limit = parseInt(pageSize, 10);
             options.skip = (parseInt(page, 10) - 1) * options.limit;

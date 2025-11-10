@@ -53,9 +53,7 @@ function formatNumberParts(value: number | string | undefined, decimals = 2) {
 }
 
 export const PdfLayout: React.FC<PdfProps> = ({record}) => {
-    const logoUrl = record?.account?.logo
-        ? `${API_URL}${record?.account?.logo}`
-        : undefined;
+    const logoUrl = record?.account?.logo || undefined;
 
     const summaryData = [
         { en: "Sub Total", ar: "الإجمالي", value: record?.subtotal },
@@ -83,7 +81,7 @@ export const PdfLayout: React.FC<PdfProps> = ({record}) => {
                             {record?.account?.logo && (
                                 <Image src={record.account.logo} style={styles.logo}/>
                             )}
-                            <Text style={styles.companyName}>{"SyncShire Enterprises"}</Text>
+                            <Text style={styles.companyName}>{record?.myOrgProfile?.partyLegalEntityRegistrationName}</Text>
                         </View>
 
                         <View style={{flex: 2, justifyContent: "center"}}>
@@ -103,7 +101,7 @@ export const PdfLayout: React.FC<PdfProps> = ({record}) => {
 
 
                             {[
-                                {label: "Invoice Name", value: record?.invoice_name, arabic: "رقم الفاتورة"},
+                                {label: "Invoice Name", value: record?.invoice_name, arabic: "اسم الفاتورة"},
                                 {
                                     label: "Date & Time",
                                     value: record?.invoiceDate ? new Date(record.invoiceDate).toLocaleString("en-GB", {
@@ -121,6 +119,7 @@ export const PdfLayout: React.FC<PdfProps> = ({record}) => {
                                     arabic: "تاريخ التسليم"
                                 },
                                 {label: "Tax Category", value: record?.tax_category, arabic: "فئة الضريبة"},
+                                {label: "Invoice Type", value: record?.invoice_type, arabic: "نوع الفاتورة"},
                                 {label: "Payment Means", value: record?.payment_means, arabic: "طريقة الدفع"},
                                 {label: "Invoice Reference", value: record?.reference_number, arabic: "المرجع"}
                             ].map((row, index) => (
@@ -148,7 +147,7 @@ export const PdfLayout: React.FC<PdfProps> = ({record}) => {
                                 {label: "City Subdivision", value: record?.myOrgProfile?.citySubdivisionName, arabic: "الحي"},
                                 {label: "Postal Code", value: record?.myOrgProfile?.postalZone, arabic: "الرمز البريدي"},
                                 {label: "Country", value: record?.myOrgProfile?.countryIdentificationCode, arabic: "رمز الدولة"},
-                                {label: "Commercial Registration (CRN)", value: record?.myOrgProfile?.partyId, arabic: "نوع الهوية"},
+                                {label: "Commercial Registration (CRN)", value: record?.myOrgProfile?.partyId, arabic: "السجل التجاري"},
                             ].map((row, i) => (
                                 <View style={styles.row} key={i}>
                                     <Text style={[styles.cell, styles.leftCell, styles.bolded]}>{row.label}</Text>
@@ -174,7 +173,7 @@ export const PdfLayout: React.FC<PdfProps> = ({record}) => {
                                 {label: "City Subdivision", value: record?.client?.citySubdivisionName, arabic: "الحي"},
                                 {label: "Postal Code", value: record?.client?.postalZone, arabic: "الرمز البريدي"},
                                 {label: "Country", value: record?.client?.countryIdentificationCode, arabic: "رمز الدولة"},
-                                {label: "Commercial Registration Number (CRN)", value: "", arabic: ""},
+                                {label: "Commercial Registration Number (CRN)", value: "", arabic: "السجل التجاري"},
                             ].map((row, i) => (
                                 <View style={styles.row} key={i}>
                                     <Text style={[styles.cell, styles.leftCell, styles.bolded]}>{row.label}</Text>
@@ -190,7 +189,7 @@ export const PdfLayout: React.FC<PdfProps> = ({record}) => {
                     <View style={styles.table}>
                         <View style={styles.tableHeader}>
                             <Text style={[styles.th, { flex: 0.5 }]}>
-                                {`الرقم\nSl. No`}
+                                {`الرقم التسلسلي\nSl. No`}
                             </Text>
                             <Text style={[styles.th, { flex: 1 }]}>
                                 {`رمز العنصر\nItem Code`}
@@ -216,7 +215,7 @@ export const PdfLayout: React.FC<PdfProps> = ({record}) => {
                             // compute displayed parts
                             const qtyParts = formatNumberParts(item.quantity, 2);           // quantities -> 6 decimals
                             const unitPriceParts = formatNumberParts(item.unitPrice, 2);   // money -> 2 decimals
-                            const discountParts = formatNumberParts(item.item_discount_amount, 2);
+                            const discountParts = formatNumberParts(item.item_discount_percentage, 2);
                             const totalParts = formatNumberParts(item.totalPrice, 2);
 
                             return (

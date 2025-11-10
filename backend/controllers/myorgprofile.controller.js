@@ -130,7 +130,6 @@ const updateMyOrgProfile = async (req, res) => {
             userId,
             plan_type,
             onboarding_complete,
-            otp,
         } = req.body;
 
         const user = await User.findById(userId);
@@ -183,6 +182,7 @@ const updateMyOrgProfile = async (req, res) => {
         if (partyLegalEntityRegistrationName) updatedFields.partyLegalEntityRegistrationName = partyLegalEntityRegistrationName;
         if (email) updatedFields.email = email;
         if (phoneNumber) updatedFields.phoneNumber = phoneNumber;
+        if (onboarding_complete) updatedFields.onboarding_complete = onboarding_complete;
 
 
         if (saudi_national_address) updatedFields.saudi_national_address = saudi_national_address;
