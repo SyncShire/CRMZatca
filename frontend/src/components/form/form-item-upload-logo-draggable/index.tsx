@@ -5,6 +5,7 @@ import type { RcFile, UploadChangeParam } from "antd/lib/upload";
 import { useStyles } from "./styled";
 import { file2Base64 } from "@refinedev/core";
 import { getValueFromEvent } from "@refinedev/antd";
+import { validateImageFile } from "@/components/form/helper";
 const { Dragger } = Upload;
 
 type Props = {
