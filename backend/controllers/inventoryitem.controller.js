@@ -1,4 +1,4 @@
-import InventoryItem from "../mongodb/models/inventoryItem.js";
+import InventoryItem from "../mongodb/models/inventoryitem.js";
 import User from "../mongodb/models/user.js";
 import mongoose from "mongoose";
 import Helper from "../helpers/Helper.js";
