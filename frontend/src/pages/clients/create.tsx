@@ -101,7 +101,7 @@ export const ClientsPageCreate = () => {
                     <Col xs={24} sm={6}>
                         <Form.Item
                             name="partyLegalEntityRegistrationName"
-                            label="Customer Registration Name"
+                            label="Registered Customer Name"
                             rules={[{required: true}]}
                         >
                             <Input placeholder="Please enter Customer Name"/>

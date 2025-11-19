@@ -102,6 +102,55 @@ export const ClientsPageList = ({children}: PropsWithChildren) => {
                         }}
                     />
                     <Table.Column
+                        title="Account"
+                        dataIndex="account.account_name"
+                        key="account.account_name"
+                        sorter
+                        defaultSortOrder={getDefaultSortOrder(
+                            "account.account_name",
+                            sorters
+                        )}
+                        defaultFilteredValue={getDefaultFilter(
+                            "account.account_name",
+                            filters,
+                            "in"
+                        )}
+                        filterDropdown={(props) => (
+                            <FilterDropdown {...props}>
+                                <Select
+                                    mode="multiple"
+                                    placeholder="Search Account"
+                                    style={{width: 220}}
+                                    {...selectPropsAccountName}
+                                />
+                            </FilterDropdown>
+                        )}
+                        render={(_, record: Client) => {
+                            const logoUrl = record?.account?.logo;
+                            const name = record?.account?.account_name || "";
+
+                            return (
+                                <Flex align="center" gap={8}>
+                                    <Avatar
+                                        alt={name}
+                                        src={logoUrl}
+                                        shape="square"
+                                        style={{
+                                            backgroundColor: logoUrl
+                                                ? "none"
+                                                : getRandomColorFromString(name),
+                                        }}
+                                    >
+                                        <Typography.Text>
+                                            {name?.[0]?.toUpperCase()}
+                                        </Typography.Text>
+                                    </Avatar>
+                                    <Typography.Text>{name}</Typography.Text>
+                                </Flex>
+                            );
+                        }}
+                    />
+                    <Table.Column
                         title="Customer Name"
                         dataIndex="partyLegalEntityRegistrationName"
                         key="partyLegalEntityRegistrationName"
@@ -158,55 +207,6 @@ export const ClientsPageList = ({children}: PropsWithChildren) => {
                         render={(phone: string) => (
                             <TagField value={phone || "N/A"} color="blue"/>
                         )}
-                    />
-                    <Table.Column
-                        title="Account"
-                        dataIndex="account.account_name"
-                        key="account.account_name"
-                        sorter
-                        defaultSortOrder={getDefaultSortOrder(
-                            "account.account_name",
-                            sorters
-                        )}
-                        defaultFilteredValue={getDefaultFilter(
-                            "account.account_name",
-                            filters,
-                            "in"
-                        )}
-                        filterDropdown={(props) => (
-                            <FilterDropdown {...props}>
-                                <Select
-                                    mode="multiple"
-                                    placeholder="Search Account"
-                                    style={{width: 220}}
-                                    {...selectPropsAccountName}
-                                />
-                            </FilterDropdown>
-                        )}
-                        render={(_, record: Client) => {
-                            const logoUrl = record?.account?.logo;
-                            const name = record?.account?.account_name || "";
-
-                            return (
-                                <Flex align="center" gap={8}>
-                                    <Avatar
-                                        alt={name}
-                                        src={logoUrl}
-                                        shape="square"
-                                        style={{
-                                            backgroundColor: logoUrl
-                                                ? "none"
-                                                : getRandomColorFromString(name),
-                                        }}
-                                    >
-                                        <Typography.Text>
-                                            {name?.[0]?.toUpperCase()}
-                                        </Typography.Text>
-                                    </Avatar>
-                                    <Typography.Text>{name}</Typography.Text>
-                                </Flex>
-                            );
-                        }}
                     />
                     <Table.Column
                         title="Actions"

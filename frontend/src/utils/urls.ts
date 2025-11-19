@@ -1,5 +1,5 @@
-export const BASE_URL = import.meta.env.VITE_APP_BASE_URL;
-export const BASE_URL_API_V1 = import.meta.env.VITE_APP_BASE_URL + "/api/v1";
+export const BASE_URL = import.meta.env.VITE_APP_BACKEND_ZATCA_SPRING_SERVICE_BASE_URL;
+export const BASE_URL_API_V1 = import.meta.env.VITE_APP_BACKEND_ZATCA_SPRING_SERVICE_BASE_URL + "/api/v1";
 
 export const AUTH_URLS = {
     LOGIN: `${BASE_URL}/auth/login`,
